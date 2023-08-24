@@ -19,6 +19,10 @@ void openFile(std::ofstream &file, std::string path){
     }
 }
 
+// Does not support negative numbers since it is unsigned and
+// does not support decimals since it is an integer.
+// It will simply skip a negative sign, and stops
+// reading when a period is encountered.
 unsigned stringToUnsignedInt(std::string str){
     unsigned num = 0;
     for(unsigned i = 0; str[i] != '.' && (i < str.length()); ++i){
@@ -30,7 +34,7 @@ unsigned stringToUnsignedInt(std::string str){
     return num;
 }
 
-
+// Supports negative numbers
 double stringToDouble(std::string str){
     double num = 0;
     double decimalMultiplier = 0.1;
