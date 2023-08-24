@@ -1,3 +1,14 @@
+/**
+ * @file analytics.h
+ * @author Josh Gillum
+ * @brief Career structure definition and function prototypes
+ * @version 0.1
+ * @date 2023-08-24
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #ifndef ANALYTICS_H
 #define ANALYTICS_H
 
