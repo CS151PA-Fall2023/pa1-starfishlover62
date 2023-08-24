@@ -48,5 +48,6 @@ struct career{
 void openFile(std::ifstream &file, std::string path);
 void openFile(std::ofstream &file, std::string path);
 unsigned stringToUnsignedInt(std::string str);
+double stringToDouble(std::string str);
 
 #endif

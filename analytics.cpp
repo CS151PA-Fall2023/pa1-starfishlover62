@@ -22,12 +22,42 @@ void openFile(std::ofstream &file, std::string path){
 unsigned stringToUnsignedInt(std::string str){
     unsigned num = 0;
     for(unsigned i = 0; str[i] != '.' && (i < str.length()); ++i){
-        std::cout << str[i];
         if(str[i] >= '0' && str[i] <= '9'){
             num *= 10;
             num += (str[i] - '0');
         }
     }
-    std::cout << std::endl;
+    return num;
+}
+
+
+double stringToDouble(std::string str){
+    double num = 0;
+    double decimalMultiplier = 0.1;
+    unsigned index = 0;
+    bool negative;
+    if(str.length() > 0 && str[0] == '-'){
+        negative = true;
+    } else {
+        negative = false;
+    }
+    for(; str[index] != '.' && (index < str.length()); ++index){
+        if(str[index] >= '0' && str[index] <= '9'){
+            num *= 10;
+            num += (str[index] - '0');
+        }
+    }
+    if(index < str.length()){
+    ++index;
+    for(; index < str.length(); ++index){
+        if(str[index] >= '0' && str[index] <= '9'){
+            num += ((str[index] - '0') * decimalMultiplier);
+            decimalMultiplier *= 0.1;
+        }
+    }
+    }
+    if(negative){
+        return -num;
+    }
     return num;
 }
