@@ -65,3 +65,15 @@ double stringToDouble(std::string str){
     }
     return num;
 }
+
+
+// Removes single (') and double (") quotes from a string
+std::string removeQuotes(std::string str){
+    std::string newString;
+    for(unsigned i = 0; i < str.length(); ++i){
+        if(str[i] != 34 && str[i] != 39){ // 34 is double quote, 39 is single quote
+            newString += str[i];
+        }
+    }
+    return newString;
+}
