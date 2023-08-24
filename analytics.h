@@ -1,6 +1,7 @@
 #ifndef ANALYTICS_H
 #define ANALYTICS_H
 
+#include <iostream>
 #include <string>
 #include <fstream>
 #include <vector>
@@ -44,5 +45,7 @@ struct career{
         medianSalary;
 };
 
+void openFile(std::ifstream &file, std::string path);
+void openFile(std::ofstream &file, std::string path);
 
 #endif
