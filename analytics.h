@@ -50,5 +50,6 @@ void openFile(std::ofstream &file, std::string path);
 unsigned stringToUnsignedInt(std::string str);
 double stringToDouble(std::string str);
 std::string removeQuotes(std::string str);
+bool stringOnlyWhitespace(std::string str);
 
 #endif

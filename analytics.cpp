@@ -77,3 +77,18 @@ std::string removeQuotes(std::string str){
     }
     return newString;
 }
+
+
+// Returns whether a string only contains whitespace characters
+// These are spaces " ", tabs "\t", carriage returns "\r", and newlines "\n"
+bool stringOnlyWhitespace(std::string str){
+    if(str.length() <= 0){
+        return true;
+    }
+    for(unsigned i = 0; i < str.length(); ++i){
+        if(str[i] != ' ' && str[i] != '\t' && str[i] != '\r' && str[i] != '\n'){
+            return false;
+        }
+    }
+    return true;
+}
