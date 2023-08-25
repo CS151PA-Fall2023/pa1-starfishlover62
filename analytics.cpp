@@ -133,7 +133,7 @@ std::string removeQuotes(std::string str){
 
 /**
  * @brief Returns whether a string only contains whitespace characters. Whitespace characters
- * are defined in this function as spaces " ", tabs "\t", carriage returns "\r", and newlines "\n"
+ * are defined in this function as spaces " ", tabs "\t", vertical tabs "\v", carriage returns "\r", and newlines "\n"
  * 
  * @param str, the string to be checked
  * @return true, the string only contains whitespace
@@ -146,7 +146,7 @@ bool stringOnlyWhitespace(std::string str){
     // Loops through each character and checks if it is one other
     // than the whitespace characters. If it is, returns false
     for(unsigned i = 0; i < str.length(); ++i){
-        if(str[i] != ' ' && str[i] != '\t' && str[i] != '\r' && str[i] != '\n'){
+        if(str[i] != ' ' && str[i] != '\t' && str[i] != '\v' && str[i] != '\r' && str[i] != '\n'){
             return false;
         }
     }
