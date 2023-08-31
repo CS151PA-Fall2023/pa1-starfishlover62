@@ -171,7 +171,10 @@ void readData(std::vector<career> &vec, std::ifstream &file){
             career currentCareer;
             section = "";
             for(unsigned i = 0; i < line.length(); ++i){
-                if(line[i] == ',' && !inQuotes){
+                if((line[i] == ',' || i == line.length()-1) && !inQuotes ){
+                    if(i == line.length()-1){
+                        section += line[i];
+                    }
                     ++dataPiece;
                     if(dataPiece == 1){
                         currentCareer.totalPopulation = stringToUnsignedInt(section);
@@ -210,10 +213,49 @@ void readData(std::vector<career> &vec, std::ifstream &file){
     }
 }
 
-void displayCareer(career * data){
-    std::cout << data->totalPopulation << std::endl;
-    std::cout << data->name << std::endl;
-    std::cout << data->meanSalary << std::endl;
-    std::cout << data->medianSalary << std::endl;
-    std::cout << data->numAsians << std::endl;
+/**
+ * @brief Will display a career's name and its specified info. Info should be a character
+ * that represents a piece of data to display.
+ * 'p' = population
+ * 's' = mean salary
+ * 'S' = median salary
+ * 'A' = num asians
+ * 'M' = num minorities
+ * 'W' = num whites
+ * 'm' = num males
+ * 'f' = num females
+ * 'b' = num bachelors
+ * 'd' = num doctorate
+ * 'g' = num masters (graduate school)
+ * 
+ * @param data 
+ * @param info 
+ */
+void displayCareer(career * data, char info){
+    std::cout << data->name << " ";
+    if(info == 'p'){
+        std::cout << data->totalPopulation << std::endl;
+    } else if(info == 's'){
+        std::cout << data->meanSalary << std::endl;
+    } else if(info == 'S'){
+        std::cout << data->medianSalary << std::endl;
+    } else if(info == 'A'){
+        std::cout << data->numAsians << std::endl;
+    } else if(info == 'M'){
+        std::cout << data->numMinorities << std::endl;
+    } else if(info == 'W'){
+        std::cout << data->numWhites << std::endl;
+    } else if(info == 'm'){
+        std::cout << data->numMales << std::endl;
+    } else if(info == 'f'){
+        std::cout << data->numFemales << std::endl;
+    } else if(info == 'b'){
+        std::cout << data->numBachelors << std::endl;
+    } else if(info == 'd'){
+        std::cout << data->numDoctorate << std::endl;
+    } else if(info == 'g'){
+        std::cout << data->numMasters << std::endl;
+    }
+
+    std::cout << std::endl;
 }
