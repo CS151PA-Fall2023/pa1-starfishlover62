@@ -163,7 +163,12 @@ void readData(std::vector<career> &vec, std::ifstream &file){
     std::string section;
     int dataPiece;
     bool inQuotes = false;
+    // Skips the first non-blank line, as well as all the blank ones that came before it
+    do {
+        getline(file,line);
+    } while(stringOnlyWhitespace(line));
     while(file.peek() != EOF){
+        line = "";
         inQuotes = false;
         dataPiece = 0;
         std::getline(file,line);
@@ -234,28 +239,42 @@ void readData(std::vector<career> &vec, std::ifstream &file){
 void displayCareer(career * data, char info){
     std::cout << data->name << " ";
     if(info == 'p'){
-        std::cout << data->totalPopulation << std::endl;
+        std::cout << data->totalPopulation;
     } else if(info == 's'){
-        std::cout << data->meanSalary << std::endl;
+        std::cout << data->meanSalary;
     } else if(info == 'S'){
-        std::cout << data->medianSalary << std::endl;
+        std::cout << data->medianSalary;
     } else if(info == 'A'){
-        std::cout << data->numAsians << std::endl;
+        std::cout << data->numAsians;
     } else if(info == 'M'){
-        std::cout << data->numMinorities << std::endl;
+        std::cout << data->numMinorities;
     } else if(info == 'W'){
-        std::cout << data->numWhites << std::endl;
+        std::cout << data->numWhites;
     } else if(info == 'm'){
-        std::cout << data->numMales << std::endl;
+        std::cout << data->numMales;
     } else if(info == 'f'){
-        std::cout << data->numFemales << std::endl;
+        std::cout << data->numFemales;
     } else if(info == 'b'){
-        std::cout << data->numBachelors << std::endl;
+        std::cout << data->numBachelors;
     } else if(info == 'd'){
-        std::cout << data->numDoctorate << std::endl;
+        std::cout << data->numDoctorate;
     } else if(info == 'g'){
-        std::cout << data->numMasters << std::endl;
+        std::cout << data->numMasters;
     }
 
     std::cout << std::endl;
+}
+
+void pointToVectorElements(std::vector<career> &original, std::vector<career *> &pointers){
+    pointers.clear();
+    for(unsigned i = 0; i < original.size(); ++i){
+        pointers.push_back(&original[i]);
+    }
+}
+
+
+void displayMultipleCareers(const std::vector<career *> &pointers, char info, unsigned num){
+    for(unsigned i = 0; i < num && i < pointers.size(); ++i){
+        displayCareer(pointers[i], info);
+    }
 }
