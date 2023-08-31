@@ -13,6 +13,7 @@
 #define ANALYTICS_H
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <fstream> 
 #include <vector>
@@ -66,5 +67,6 @@ void readData(std::vector<career> &vec, std::ifstream &file);
 void displayCareer(career * data, char info);
 void displayMultipleCareers(const std::vector<career *> &pointers, char info, unsigned num);
 void pointToVectorElements(std::vector<career> &original, std::vector<career *> &pointers);
+void sortPointerVector(std::vector<career *> &pointers, const char info, const char direction);
 
 #endif

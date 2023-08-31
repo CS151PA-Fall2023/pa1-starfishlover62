@@ -23,7 +23,12 @@ int main(){
     std::ifstream dataFile; 
     openFile(dataFile, dataPath);
     readData(graduateData, dataFile);
-    displayCareer(&graduateData[9]);
+    std::vector<career *> graduatePointers;
+    pointToVectorElements(graduateData,graduatePointers);
+    displayMultipleCareers(graduatePointers,'g',10);
+    std::cout << std::endl;
+    sortPointerVector(graduatePointers,'g','d');
+    displayMultipleCareers(graduatePointers,'g',10);
 
     return 0;
 }

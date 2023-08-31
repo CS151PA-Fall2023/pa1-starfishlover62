@@ -237,29 +237,30 @@ void readData(std::vector<career> &vec, std::ifstream &file){
  * @param info 
  */
 void displayCareer(career * data, char info){
-    std::cout << data->name << " ";
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << std::setw(35) << std::left << data->name << " ";
     if(info == 'p'){
-        std::cout << data->totalPopulation;
+        std::cout << "#" << std::setw(11) << std::right << data->totalPopulation;
     } else if(info == 's'){
-        std::cout << data->meanSalary;
+        std::cout << "$" << std::setw(11) << std::right << data->meanSalary;
     } else if(info == 'S'){
-        std::cout << data->medianSalary;
+        std::cout << "$" << std::setw(11) << std::right << data->medianSalary;
     } else if(info == 'A'){
-        std::cout << data->numAsians;
+        std::cout << "#" << std::setw(11) << std::right << data->numAsians;
     } else if(info == 'M'){
-        std::cout << data->numMinorities;
+        std::cout << "#" << std::setw(11) << std::right << data->numMinorities;
     } else if(info == 'W'){
-        std::cout << data->numWhites;
+        std::cout << "#" << std::setw(11) << std::right << data->numWhites;
     } else if(info == 'm'){
-        std::cout << data->numMales;
+        std::cout << "#" << std::setw(11) << std::right << data->numMales;
     } else if(info == 'f'){
-        std::cout << data->numFemales;
+        std::cout << "#" << std::setw(11) << std::right << data->numFemales;
     } else if(info == 'b'){
-        std::cout << data->numBachelors;
+        std::cout << "#" << std::setw(11) << std::right << data->numBachelors;
     } else if(info == 'd'){
-        std::cout << data->numDoctorate;
+        std::cout << "#" << std::setw(11) << std::right << data->numDoctorate;
     } else if(info == 'g'){
-        std::cout << data->numMasters;
+        std::cout << "#" << std::setw(11) << std::right << data->numMasters;
     }
 
     std::cout << std::endl;
@@ -276,5 +277,156 @@ void pointToVectorElements(std::vector<career> &original, std::vector<career *> 
 void displayMultipleCareers(const std::vector<career *> &pointers, char info, unsigned num){
     for(unsigned i = 0; i < num && i < pointers.size(); ++i){
         displayCareer(pointers[i], info);
+    }
+}
+
+/**
+ * @brief Sorts the vector of pointers that point to the vector of careers
+ * 
+ * @param pointers, The vector of pointers that point to the vector of careers
+ * @param info, A character of the list below, which will determine what criteria to sort by
+ * 'p' = population
+ * 's' = mean salary
+ * 'S' = median salary
+ * 'A' = num asians
+ * 'M' = num minorities
+ * 'W' = num whites
+ * 'm' = num males
+ * 'f' = num females
+ * 'b' = num bachelors
+ * 'd' = num doctorate
+ * 'g' = num masters (graduate school)
+ * Note: the vector will not be sorted if the argument is not one of these characters
+ * @param direction, a character, either 'a' to sort in ascending order (low to high), or 
+ * 'd' to sort in descending order (high to low). If the argument is neither of these
+ * characters, the vector will be sorted in ascending order
+ */
+void sortPointerVector(std::vector<career *> &pointers, const char info, const char direction){
+    unsigned startIndex = 0;
+    unsigned swapIndex;
+    career * tempPtr;
+    bool ascending = true;
+    if(direction == 'd' || direction == 'D'){
+        ascending = false;
+    }
+    for(;startIndex < pointers.size(); ++startIndex){
+        tempPtr = nullptr;
+        swapIndex = startIndex;
+        for(unsigned currentIndex = startIndex + 1; currentIndex < pointers.size(); ++currentIndex){
+            if(info == 'p'){
+                if(!ascending){
+                    if(pointers[currentIndex]->totalPopulation > pointers[swapIndex]->totalPopulation){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->totalPopulation < pointers[swapIndex]->totalPopulation){
+                        swapIndex = currentIndex;
+                    }
+                }
+            } else if(info == 's'){
+                if(!ascending){
+                    if(pointers[currentIndex]->meanSalary > pointers[swapIndex]->meanSalary){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->meanSalary < pointers[swapIndex]->meanSalary){
+                        swapIndex = currentIndex;
+                    }
+                }
+            } else if(info == 'S'){
+                if(!ascending){
+                    if(pointers[currentIndex]->medianSalary > pointers[swapIndex]->medianSalary){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->medianSalary < pointers[swapIndex]->medianSalary){
+                        swapIndex = currentIndex;
+                    }
+                }
+            } else if(info == 'A'){
+                if(!ascending){
+                    if(pointers[currentIndex]->numAsians > pointers[swapIndex]->numAsians){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->numAsians < pointers[swapIndex]->numAsians){
+                        swapIndex = currentIndex;
+                    }
+                }
+            } else if(info == 'M'){
+                if(!ascending){
+                    if(pointers[currentIndex]->numMinorities > pointers[swapIndex]->numMinorities){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->numMinorities < pointers[swapIndex]->numMinorities){
+                        swapIndex = currentIndex;
+                    }
+                }
+            } else if(info == 'W'){
+                if(!ascending){
+                    if(pointers[currentIndex]->numWhites > pointers[swapIndex]->numWhites){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->numWhites < pointers[swapIndex]->numWhites){
+                        swapIndex = currentIndex;
+                    }
+                }
+            } else if(info == 'm'){
+                if(!ascending){
+                    if(pointers[currentIndex]->numMales > pointers[swapIndex]->numMales){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->numMales < pointers[swapIndex]->numMales){
+                        swapIndex = currentIndex;
+                    }
+                }
+            } else if(info == 'f'){
+                if(!ascending){
+                    if(pointers[currentIndex]->numFemales > pointers[swapIndex]->numFemales){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->numFemales < pointers[swapIndex]->numFemales){
+                        swapIndex = currentIndex;
+                    }
+                }
+            } else if(info == 'b'){
+                if(!ascending){
+                    if(pointers[currentIndex]->numBachelors > pointers[swapIndex]->numBachelors){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->numBachelors < pointers[swapIndex]->numBachelors){
+                        swapIndex = currentIndex;
+                    }
+                }
+            } else if(info == 'd'){
+                if(!ascending){
+                    if(pointers[currentIndex]->numDoctorate > pointers[swapIndex]->numDoctorate){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->numDoctorate < pointers[swapIndex]->numDoctorate){
+                        swapIndex = currentIndex;
+                    }
+                }
+            } else if(info == 'g'){
+                if(!ascending){
+                    if(pointers[currentIndex]->numMasters > pointers[swapIndex]->numMasters){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if(pointers[currentIndex]->numMasters < pointers[swapIndex]->numMasters){
+                        swapIndex = currentIndex;
+                    }
+                }
+            }
+        }
+        tempPtr = pointers[startIndex];
+        pointers[startIndex] = pointers[swapIndex];
+        pointers[swapIndex] = tempPtr;
     }
 }
