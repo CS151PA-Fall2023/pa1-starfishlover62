@@ -6,7 +6,7 @@
  * @date 2023-08-24
  * 
  * @copyright Copyright (c) 2023
- * 
+ *  
  */
 
 #include "analytics.h"
@@ -154,4 +154,66 @@ bool stringOnlyWhitespace(std::string str){
     // If the loop finishes without finding a non-whitespace character,
     // true will be returned
     return true;
+}
+
+
+
+void readData(std::vector<career> &vec, std::ifstream &file){
+    std::string line;
+    std::string section;
+    int dataPiece;
+    bool inQuotes = false;
+    while(file.peek() != EOF){
+        inQuotes = false;
+        dataPiece = 0;
+        std::getline(file,line);
+        if(!stringOnlyWhitespace(line)){
+            career currentCareer;
+            section = "";
+            for(unsigned i = 0; i < line.length(); ++i){
+                if(line[i] == ',' && !inQuotes){
+                    ++dataPiece;
+                    if(dataPiece == 1){
+                        currentCareer.totalPopulation = stringToUnsignedInt(section);
+                    } else if(dataPiece == 2){
+                        currentCareer.name = section;
+                    } else if(dataPiece == 3){
+                        currentCareer.meanSalary = stringToDouble(section);
+                    } else if(dataPiece == 4){
+                        currentCareer.medianSalary = stringToDouble(section);
+                    } else if(dataPiece == 5){
+                        currentCareer.numAsians = stringToUnsignedInt(section);
+                    } else if(dataPiece == 6){
+                        currentCareer.numMinorities = stringToUnsignedInt(section);
+                    } else if(dataPiece == 7){
+                        currentCareer.numWhites = stringToUnsignedInt(section);
+                    } else if(dataPiece == 8){
+                        currentCareer.numFemales = stringToUnsignedInt(section);
+                    } else if(dataPiece == 9){
+                        currentCareer.numMales = stringToUnsignedInt(section);
+                    } else if(dataPiece == 10){
+                        currentCareer.numBachelors = stringToUnsignedInt(section);
+                    } else if(dataPiece == 11){
+                        currentCareer.numDoctorate = stringToUnsignedInt(section);
+                    } else if(dataPiece == 12){
+                        currentCareer.numMasters = stringToUnsignedInt(section);
+                    } 
+                    section = "";
+                } else if(line[i] == '"'){
+                    inQuotes = !inQuotes;
+                } else {
+                    section += line[i];
+                }
+            }
+            vec.push_back(currentCareer);
+        }
+    }
+}
+
+void displayCareer(career * data){
+    std::cout << data->totalPopulation << std::endl;
+    std::cout << data->name << std::endl;
+    std::cout << data->meanSalary << std::endl;
+    std::cout << data->medianSalary << std::endl;
+    std::cout << data->numAsians << std::endl;
 }

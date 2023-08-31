@@ -12,11 +12,18 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <vector>
+#include <string>
 
 #include "analytics.h"
 
 int main(){
+    std::string dataPath = "./graduates2015.csv";
+    std::vector<career> graduateData;
+    std::ifstream dataFile; 
+    openFile(dataFile, dataPath);
+    readData(graduateData, dataFile);
+    displayCareer(&graduateData[9]);
 
-    std::cout << stringOnlyWhitespace(" \ta\r\n") << std::endl;
     return 0;
 }

@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include <string>
-#include <fstream>
+#include <fstream> 
 #include <vector>
 #include <cstdlib>
 
@@ -62,5 +62,7 @@ unsigned stringToUnsignedInt(std::string str);
 double stringToDouble(std::string str);
 std::string removeQuotes(std::string str);
 bool stringOnlyWhitespace(std::string str);
+void readData(std::vector<career> &vec, std::ifstream &file);
+void displayCareer(career * data);
 
 #endif
