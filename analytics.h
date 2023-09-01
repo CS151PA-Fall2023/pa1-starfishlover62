@@ -66,9 +66,13 @@ bool stringOnlyWhitespace(std::string str);
 void readData(std::vector<career> &vec, std::ifstream &file);
 void displayCareer(career * data, char info);
 void displayMultipleCareers(const std::vector<career *> &pointers, char info, unsigned num);
+void displayMultipleCareers(const std::vector<career *> &pointers, char info);
+void displayMultipleCareers(const std::vector<career *> &pointers);
 void pointToVectorElements(std::vector<career> &original, std::vector<career *> &pointers);
 void sortPointerVector(std::vector<career *> &pointers, const char info, const char direction);
 void displayMenu(std::vector<career *> &pointers);
 unsigned getMenuOption(unsigned min, unsigned max);
+void convertStringToLower(std::string & str);
+void keepOnlyLetters(std::string & str);
 
 #endif

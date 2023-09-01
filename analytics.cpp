@@ -128,6 +128,17 @@ std::string removeQuotes(std::string str){
 }
 
 
+void keepOnlyLetters(std::string & str){
+    std::string newString = "";
+    for(unsigned i = 0; i < str.length(); ++i){
+        if((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')){
+            newString += str[i];
+        }
+    }
+    str = newString;
+}
+
+
 // Returns whether a string only contains whitespace characters
 // These are spaces " ", tabs "\t", carriage returns "\r", and newlines "\n"
 
@@ -156,7 +167,13 @@ bool stringOnlyWhitespace(std::string str){
     return true;
 }
 
-
+void convertStringToLower(std::string &str){
+    for(unsigned i = 0; i < str.length(); ++i){
+        if(str[i] >= 'A' && str[i] <= 'Z'){
+            str[i] = str[i] - 'A' + 'a';
+        }
+    }
+}
 
 void readData(std::vector<career> &vec, std::ifstream &file){
     std::string line;
@@ -239,7 +256,7 @@ void readData(std::vector<career> &vec, std::ifstream &file){
  */
 void displayCareer(career * data, char info){
     std::cout << std::fixed << std::setprecision(2);
-    std::cout << std::setw(37) << std::left << data->name << " ";
+    std::cout << std::setw(36) << std::left << data->name << " ";
     if(info == 'p'){
         std::cout << "#" << std::setw(11) << std::right << data->totalPopulation;
     } else if(info == 's'){
@@ -264,8 +281,10 @@ void displayCareer(career * data, char info){
         std::cout << "#" << std::setw(11) << std::right << data->numMasters;
     } else if(info == 'k'){
         std::cout << std::setw(4) << std::right << std::fixed << std::setprecision(1) 
+            << std::endl << std::setw(7) << "Females" << std::setw(34) 
             << (static_cast<double>(data->numFemales)/data->totalPopulation)*100
-            << " %" << std::endl << std::setw(8) << std::left << data->numFemales;
+            << " %" << std::right << std::setw(37) << "Males" << std::endl;
+            std::cout << std::setw(8) << std::left << data->numFemales;
         
         for(unsigned i = 0; i < 64; ++i){
             if(i < 64*(static_cast<double>(data->numFemales)/data->totalPopulation)){
@@ -274,11 +293,12 @@ void displayCareer(career * data, char info){
                 std::cout << "\033[38;5;27m" << '@' << "\033[0m" << std::flush;
             }
         }
-        std::cout << std::setw(8) << std::right << data->numMales;
+        std::cout << std::setw(8) << std::right << data->numMales << std::endl;
     }
 
     std::cout << std::endl;
 }
+
 
 void pointToVectorElements(std::vector<career> &original, std::vector<career *> &pointers){
     pointers.clear();
@@ -289,14 +309,33 @@ void pointToVectorElements(std::vector<career> &original, std::vector<career *> 
 
 
 void displayMultipleCareers(const std::vector<career *> &pointers, char info, unsigned num){
+    std::cout << std::endl;
     for(unsigned i = 0; i < num && i < pointers.size(); ++i){
+        std::cout << std::setw(2) << std::right << i+1 << std::setw(2) << ". ";
         displayCareer(pointers[i], info);
     }
 }
 
 void displayMultipleCareers(const std::vector<career *> &pointers, char info){
     for(unsigned i = 0; i < pointers.size(); ++i){
+        std::cout << std::setw(2) << std::right << i+1 << std::setw(2) << ". ";
         displayCareer(pointers[i], info);
+    }
+}
+
+void displayMultipleCareers(const std::vector<career *> &pointers){
+    unsigned end = pointers.size()/2;
+    if(end != static_cast<double>(pointers.size())/2){
+        end++;
+    }
+    for(unsigned i = 0; i < end; ++i){
+        std::cout << std::setw(2) << std::right << i+1 << std::setw(1) << "." << std::setw(36) << std::left
+        << pointers[i]->name;
+        if(end+i < pointers.size()){
+            std::cout << std::setw(2) << std::right << end+i+1 << std::setw(1) << "."
+            << std::setw(36) << std::left << pointers[end+i]->name;
+        }
+        std::cout << std::endl;
     }
 }
 
@@ -305,6 +344,7 @@ void displayMultipleCareers(const std::vector<career *> &pointers, char info){
  * 
  * @param pointers, The vector of pointers that point to the vector of careers
  * @param info, A character of the list below, which will determine what criteria to sort by
+ * 'n' = name of the career
  * 'p' = population
  * 's' = mean salary
  * 'S' = median salary
@@ -333,7 +373,34 @@ void sortPointerVector(std::vector<career *> &pointers, const char info, const c
         tempPtr = nullptr;
         swapIndex = startIndex;
         for(unsigned currentIndex = startIndex + 1; currentIndex < pointers.size(); ++currentIndex){
-            if(info == 'p'){
+            if(info == 'n'){
+                std::string swapWorkString = pointers[swapIndex]->name;
+                convertStringToLower(swapWorkString);
+                keepOnlyLetters(swapWorkString);
+                std::string currentWorkString = pointers[currentIndex]->name;
+                convertStringToLower(currentWorkString);
+                keepOnlyLetters(currentWorkString);
+
+                if(!ascending){
+                    for(unsigned i = 0; i < swapWorkString.length() && i < currentWorkString.length(); ++i){
+                        if(currentWorkString[i] > swapWorkString[i]){
+                            swapIndex = currentIndex;
+                            break;
+                        } else if(swapWorkString[i] > currentWorkString[i]){
+                            break;
+                        }
+                    }
+                } else {
+                    for(unsigned i = 0; i < swapWorkString.length() && i < currentWorkString.length(); ++i){
+                        if(currentWorkString[i] < swapWorkString[i]){
+                            swapIndex = currentIndex;
+                            break;
+                        } else if(swapWorkString[i] < currentWorkString[i]){
+                            break;
+                        }
+                    }
+                }
+            } else if(info == 'p'){
                 if(!ascending){
                     if(pointers[currentIndex]->totalPopulation > pointers[swapIndex]->totalPopulation){
                         swapIndex = currentIndex;
@@ -465,6 +532,7 @@ void sortPointerVector(std::vector<career *> &pointers, const char info, const c
 
 
 unsigned getMenuOption(unsigned min, unsigned max){
+    std::cout << "Enter a menu option (" << min << "-" << max << "): ";
     std::string input;
     unsigned output;
     do {
@@ -478,65 +546,18 @@ unsigned getMenuOption(unsigned min, unsigned max){
 }
 
 void displayMenu(std::vector<career *> &pointers){
-    unsigned option;
-    do {
-        std::cout << std::endl << std::endl;
-        std::cout << "2015 National Survey of Recent College Graduates" << std::endl;
-        std::cout << "1.  Top 10 Majors with the Highest Mean Salary" << std::endl;
-        std::cout << "2.  Top 10 Majors with the Lowest Mean Salary" << std::endl;
-        std::cout << "3.  Top 10 Majors with the Highest Median Salary" << std::endl;
-        std::cout << "4.  Top 10 Majors with the Lowest Median Salary" << std::endl;
-        std::cout << "5.  What are the Top 5 Majors with the Highest Number of Asians" << std::endl;
-        std::cout << "6.  What are the Top 5 Majors with the Lowest Number of Asians" << std::endl;
-        std::cout << "7.  What are the Top 5 Majors with the Highest Number of Minorities" << std::endl;
-        std::cout << "8.  What are the Top 5 Majors with the Lowest Number of Minorities" << std::endl;
-        std::cout << "9.  Top 5 Majors with Highest Percentage of Females" << std::endl;
-        std::cout << "10. Top 5 Majors with Highest Percentage of Males" << std::endl;
-        std::cout << "11. Display Information for a Specific Major" << std::endl;
-        std::cout << "12. Exit" << std::endl;
-
-        std::cout << "Enter a menu option: ";
-        option = getMenuOption(1,12);
-        if(option == 1){
-            sortPointerVector(pointers,'s','d');
-            displayMultipleCareers(pointers,'s', 10);
-        } else if(option == 2){
-            sortPointerVector(pointers,'s','a');
-            displayMultipleCareers(pointers,'s', 10);
-        } else if(option == 3){
-            sortPointerVector(pointers,'S','d');
-            displayMultipleCareers(pointers,'S', 10);
-        } else if(option == 4){
-            sortPointerVector(pointers,'S','a');
-            displayMultipleCareers(pointers,'S', 10);
-        } else if(option == 5){
-            sortPointerVector(pointers,'A','d');
-            displayMultipleCareers(pointers,'A', 5);
-        } else if(option == 6){
-            sortPointerVector(pointers,'A','a');
-            displayMultipleCareers(pointers,'A', 5);
-        } else if(option == 7){
-            sortPointerVector(pointers,'M','d');
-            displayMultipleCareers(pointers,'M', 5);
-        } else if(option == 8){
-            sortPointerVector(pointers,'M','a');
-            displayMultipleCareers(pointers,'M', 5);
-        } else if(option == 9){
-            sortPointerVector(pointers,'k','d');
-            displayMultipleCareers(pointers,'k', 5);
-        } else if(option == 10){
-            sortPointerVector(pointers,'k','a');
-            displayMultipleCareers(pointers,'k', 5);
-        } else if(option == 11){
-            std::cout << "Option 11 picked. Not finished" << std::endl;
-        } else if(option == 12){
-            exit(1);
-        } else {
-            std::cout << "Incorrect menu option... Exiting program" << std::endl;
-            exit(1);
-        }
-        std::cout << "Press enter to continue ...";
-        std::string temp;
-        std::getline(std::cin,temp);
-    } while(option != 12);
+    std::cout << std::endl << std::endl;
+    std::cout << "2015 National Survey of Recent College Graduates" << std::endl;
+    std::cout << "1.  Top 10 Majors with the Highest Mean Salary" << std::endl;
+    std::cout << "2.  Top 10 Majors with the Lowest Mean Salary" << std::endl;
+    std::cout << "3.  Top 10 Majors with the Highest Median Salary" << std::endl;
+    std::cout << "4.  Top 10 Majors with the Lowest Median Salary" << std::endl;
+    std::cout << "5.  What are the Top 5 Majors with the Highest Number of Asians" << std::endl;
+    std::cout << "6.  What are the Top 5 Majors with the Lowest Number of Asians" << std::endl;
+    std::cout << "7.  What are the Top 5 Majors with the Highest Number of Minorities" << std::endl;
+    std::cout << "8.  What are the Top 5 Majors with the Lowest Number of Minorities" << std::endl;
+    std::cout << "9.  Top 5 Majors with Highest Percentage of Females" << std::endl;
+    std::cout << "10. Top 5 Majors with Highest Percentage of Males" << std::endl;
+    std::cout << "11. Display Information for a Specific Major" << std::endl;
+    std::cout << "12. Exit" << std::endl;
 }
