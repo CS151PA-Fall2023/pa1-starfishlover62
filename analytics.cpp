@@ -281,9 +281,9 @@ void displayCareer(career * data, char info){
         std::cout << "#" << std::setw(11) << std::right << data->numMasters;
     } else if(info == 'k'){
         std::cout << std::setw(4) << std::right << std::fixed << std::setprecision(1) 
-            << std::endl << std::setw(7) << "Females" << std::setw(34) 
+            << std::endl << std::setw(7) << "Females" << std::setw(32) 
             << (static_cast<double>(data->numFemales)/data->totalPopulation)*100
-            << " %" << std::right << std::setw(37) << "Males" << std::endl;
+            << "% Female" << std::right << std::setw(33) << "Males" << std::endl;
             std::cout << std::setw(8) << std::left << data->numFemales;
         
         for(unsigned i = 0; i < 64; ++i){
@@ -298,6 +298,47 @@ void displayCareer(career * data, char info){
 
     std::cout << std::endl;
 }
+
+
+void displayCareer(career * data){
+    unsigned dataWidth = 23;
+    std::cout << std::endl << "\033[4m" << data->name << "\033[0m" << ":" << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Population:" 
+        << "#" << std::setw(11) << std::right << data->totalPopulation << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Mean Salary:" 
+        << "\033[38;5;46m" << '$' << "\033[0m" << std::setw(11) << std::right << data->meanSalary << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Median Salary:" 
+        << "\033[38;5;46m" << '$' << "\033[0m" << std::setw(11) << std::right << data->medianSalary << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Asians:" 
+        << "#" << std::setw(11) << std::right << data->numAsians << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Minorities:" 
+        << "#" << std::setw(11) << std::right << data->numMinorities << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Whites:" 
+        << "#" << std::setw(11) << std::right << data->numWhites << std::endl;
+
+    std::cout << std::setw(4) << std::right << std::fixed << std::setprecision(1) 
+        << std::endl << std::setw(7) << "Females" << std::setw(32) 
+        << (static_cast<double>(data->numFemales)/data->totalPopulation)*100
+        << "% Female" << std::right << std::setw(33) << "Males" << std::endl;
+        std::cout << std::setw(8) << std::left << data->numFemales;
+    
+    for(unsigned i = 0; i < 64; ++i){
+        if(i < 64*(static_cast<double>(data->numFemales)/data->totalPopulation)){
+            std::cout << "\033[38;5;200m" << '#' << "\033[0m" << std::flush;
+        } else {
+            std::cout << "\033[38;5;27m" << '@' << "\033[0m" << std::flush;
+        }
+    }
+    std::cout << std::setw(8) << std::right << data->numMales << std::endl << std::endl;
+
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Bachelor's:" 
+        << "#" << std::setw(11) << std::right << data->numBachelors << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Masters:" 
+        << "#" << std::setw(11) << std::right << data->numMasters << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Doctorate's:" 
+        << "#" << std::setw(11) << std::right << data->numDoctorate << std::endl;
+}
+
 
 
 void pointToVectorElements(std::vector<career> &original, std::vector<career *> &pointers){

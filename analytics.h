@@ -65,6 +65,7 @@ std::string removeQuotes(std::string str);
 bool stringOnlyWhitespace(std::string str);
 void readData(std::vector<career> &vec, std::ifstream &file);
 void displayCareer(career * data, char info);
+void displayCareer(career * data);
 void displayMultipleCareers(const std::vector<career *> &pointers, char info, unsigned num);
 void displayMultipleCareers(const std::vector<career *> &pointers, char info);
 void displayMultipleCareers(const std::vector<career *> &pointers);

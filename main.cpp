@@ -63,6 +63,8 @@ int main(){
         } else if(option == 11){
             sortPointerVector(graduatePointers,'n','a');
             displayMultipleCareers(graduatePointers);
+            unsigned choice = getMenuOption(1,graduatePointers.size()) - 1;
+            displayCareer(graduatePointers[choice]);
         } else if(option == 12){
             exit(1);
         } else {
