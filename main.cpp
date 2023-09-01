@@ -25,10 +25,9 @@ int main(){
     readData(graduateData, dataFile);
     std::vector<career *> graduatePointers;
     pointToVectorElements(graduateData,graduatePointers);
-    displayMultipleCareers(graduatePointers,'g',10);
-    std::cout << std::endl;
-    sortPointerVector(graduatePointers,'g','d');
-    displayMultipleCareers(graduatePointers,'g',10);
+
+
+    displayMenu(graduatePointers);
 
     return 0;
 }

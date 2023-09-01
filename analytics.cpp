@@ -229,6 +229,7 @@ void readData(std::vector<career> &vec, std::ifstream &file){
  * 'W' = num whites
  * 'm' = num males
  * 'f' = num females
+ * 'k' = ration of females to total population
  * 'b' = num bachelors
  * 'd' = num doctorate
  * 'g' = num masters (graduate school)
@@ -238,13 +239,13 @@ void readData(std::vector<career> &vec, std::ifstream &file){
  */
 void displayCareer(career * data, char info){
     std::cout << std::fixed << std::setprecision(2);
-    std::cout << std::setw(35) << std::left << data->name << " ";
+    std::cout << std::setw(37) << std::left << data->name << " ";
     if(info == 'p'){
         std::cout << "#" << std::setw(11) << std::right << data->totalPopulation;
     } else if(info == 's'){
-        std::cout << "$" << std::setw(11) << std::right << data->meanSalary;
+        std::cout << "\033[38;5;46m" << '$' << "\033[0m" << std::setw(11) << std::right << data->meanSalary;
     } else if(info == 'S'){
-        std::cout << "$" << std::setw(11) << std::right << data->medianSalary;
+        std::cout << "\033[38;5;46m" << '$' << "\033[0m" << std::setw(11) << std::right << data->medianSalary;
     } else if(info == 'A'){
         std::cout << "#" << std::setw(11) << std::right << data->numAsians;
     } else if(info == 'M'){
@@ -261,6 +262,19 @@ void displayCareer(career * data, char info){
         std::cout << "#" << std::setw(11) << std::right << data->numDoctorate;
     } else if(info == 'g'){
         std::cout << "#" << std::setw(11) << std::right << data->numMasters;
+    } else if(info == 'k'){
+        std::cout << std::setw(4) << std::right << std::fixed << std::setprecision(1) 
+            << (static_cast<double>(data->numFemales)/data->totalPopulation)*100
+            << " %" << std::endl << std::setw(8) << std::left << data->numFemales;
+        
+        for(unsigned i = 0; i < 64; ++i){
+            if(i < 64*(static_cast<double>(data->numFemales)/data->totalPopulation)){
+                std::cout << "\033[38;5;200m" << '#' << "\033[0m" << std::flush;
+            } else {
+                std::cout << "\033[38;5;27m" << '@' << "\033[0m" << std::flush;
+            }
+        }
+        std::cout << std::setw(8) << std::right << data->numMales;
     }
 
     std::cout << std::endl;
@@ -280,6 +294,12 @@ void displayMultipleCareers(const std::vector<career *> &pointers, char info, un
     }
 }
 
+void displayMultipleCareers(const std::vector<career *> &pointers, char info){
+    for(unsigned i = 0; i < pointers.size(); ++i){
+        displayCareer(pointers[i], info);
+    }
+}
+
 /**
  * @brief Sorts the vector of pointers that point to the vector of careers
  * 
@@ -293,6 +313,7 @@ void displayMultipleCareers(const std::vector<career *> &pointers, char info, un
  * 'W' = num whites
  * 'm' = num males
  * 'f' = num females
+ * 'k' = percentage females to total population
  * 'b' = num bachelors
  * 'd' = num doctorate
  * 'g' = num masters (graduate school)
@@ -302,14 +323,13 @@ void displayMultipleCareers(const std::vector<career *> &pointers, char info, un
  * characters, the vector will be sorted in ascending order
  */
 void sortPointerVector(std::vector<career *> &pointers, const char info, const char direction){
-    unsigned startIndex = 0;
     unsigned swapIndex;
     career * tempPtr;
     bool ascending = true;
     if(direction == 'd' || direction == 'D'){
         ascending = false;
     }
-    for(;startIndex < pointers.size(); ++startIndex){
+    for(unsigned startIndex = 0;startIndex < pointers.size(); ++startIndex){
         tempPtr = nullptr;
         swapIndex = startIndex;
         for(unsigned currentIndex = startIndex + 1; currentIndex < pointers.size(); ++currentIndex){
@@ -423,10 +443,100 @@ void sortPointerVector(std::vector<career *> &pointers, const char info, const c
                         swapIndex = currentIndex;
                     }
                 }
+            } else if(info == 'k'){
+                if(!ascending){
+                    if((static_cast<double>(pointers[currentIndex]->numFemales) / pointers[currentIndex]->totalPopulation) 
+                    > (static_cast<double>(pointers[swapIndex]->numFemales) / pointers[swapIndex]->totalPopulation)){
+                        swapIndex = currentIndex;
+                    }
+                } else {
+                    if((static_cast<double>(pointers[currentIndex]->numFemales) / pointers[currentIndex]->totalPopulation) 
+                    < (static_cast<double>(pointers[swapIndex]->numFemales) / pointers[swapIndex]->totalPopulation)){
+                        swapIndex = currentIndex;
+                    }
+                }
             }
         }
         tempPtr = pointers[startIndex];
         pointers[startIndex] = pointers[swapIndex];
         pointers[swapIndex] = tempPtr;
     }
+}
+
+
+unsigned getMenuOption(unsigned min, unsigned max){
+    std::string input;
+    unsigned output;
+    do {
+        input = "";
+        std::getline(std::cin,input);
+        if(!stringOnlyWhitespace(input)){
+            output = stringToUnsignedInt(input);
+        }
+    } while(output < min || output > max);
+    return output;
+}
+
+void displayMenu(std::vector<career *> &pointers){
+    unsigned option;
+    do {
+        std::cout << std::endl << std::endl;
+        std::cout << "2015 National Survey of Recent College Graduates" << std::endl;
+        std::cout << "1.  Top 10 Majors with the Highest Mean Salary" << std::endl;
+        std::cout << "2.  Top 10 Majors with the Lowest Mean Salary" << std::endl;
+        std::cout << "3.  Top 10 Majors with the Highest Median Salary" << std::endl;
+        std::cout << "4.  Top 10 Majors with the Lowest Median Salary" << std::endl;
+        std::cout << "5.  What are the Top 5 Majors with the Highest Number of Asians" << std::endl;
+        std::cout << "6.  What are the Top 5 Majors with the Lowest Number of Asians" << std::endl;
+        std::cout << "7.  What are the Top 5 Majors with the Highest Number of Minorities" << std::endl;
+        std::cout << "8.  What are the Top 5 Majors with the Lowest Number of Minorities" << std::endl;
+        std::cout << "9.  Top 5 Majors with Highest Percentage of Females" << std::endl;
+        std::cout << "10. Top 5 Majors with Highest Percentage of Males" << std::endl;
+        std::cout << "11. Display Information for a Specific Major" << std::endl;
+        std::cout << "12. Exit" << std::endl;
+
+        std::cout << "Enter a menu option: ";
+        option = getMenuOption(1,12);
+        if(option == 1){
+            sortPointerVector(pointers,'s','d');
+            displayMultipleCareers(pointers,'s', 10);
+        } else if(option == 2){
+            sortPointerVector(pointers,'s','a');
+            displayMultipleCareers(pointers,'s', 10);
+        } else if(option == 3){
+            sortPointerVector(pointers,'S','d');
+            displayMultipleCareers(pointers,'S', 10);
+        } else if(option == 4){
+            sortPointerVector(pointers,'S','a');
+            displayMultipleCareers(pointers,'S', 10);
+        } else if(option == 5){
+            sortPointerVector(pointers,'A','d');
+            displayMultipleCareers(pointers,'A', 5);
+        } else if(option == 6){
+            sortPointerVector(pointers,'A','a');
+            displayMultipleCareers(pointers,'A', 5);
+        } else if(option == 7){
+            sortPointerVector(pointers,'M','d');
+            displayMultipleCareers(pointers,'M', 5);
+        } else if(option == 8){
+            sortPointerVector(pointers,'M','a');
+            displayMultipleCareers(pointers,'M', 5);
+        } else if(option == 9){
+            sortPointerVector(pointers,'k','d');
+            displayMultipleCareers(pointers,'k', 5);
+        } else if(option == 10){
+            sortPointerVector(pointers,'k','a');
+            displayMultipleCareers(pointers,'k', 5);
+        } else if(option == 11){
+            std::cout << "Option 11 picked. Not finished" << std::endl;
+        } else if(option == 12){
+            exit(1);
+        } else {
+            std::cout << "Incorrect menu option... Exiting program" << std::endl;
+            exit(1);
+        }
+        std::cout << "Press enter to continue ...";
+        std::string temp;
+        std::getline(std::cin,temp);
+    } while(option != 12);
 }
