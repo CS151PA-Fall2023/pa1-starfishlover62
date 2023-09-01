@@ -128,19 +128,21 @@ std::string removeQuotes(std::string str){
 }
 
 
+/**
+ * @brief Removes all characters from a string that are not letters
+ * 
+ * @param str, the string to be converted
+ */
 void keepOnlyLetters(std::string & str){
-    std::string newString = "";
+    std::string newString = ""; // letters are added to this when they are encountered
     for(unsigned i = 0; i < str.length(); ++i){
-        if((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')){
+        if((str[i] >= 'a' && str[i] <= 'z') || (str[i] >= 'A' && str[i] <= 'Z')){ // If the letter is A-Z or a-z
             newString += str[i];
         }
     }
-    str = newString;
+    str = newString; // The original string is then given the value of the string with only letters
 }
 
-
-// Returns whether a string only contains whitespace characters
-// These are spaces " ", tabs "\t", carriage returns "\r", and newlines "\n"
 
 /**
  * @brief Returns whether a string only contains whitespace characters. Whitespace characters
@@ -167,6 +169,12 @@ bool stringOnlyWhitespace(std::string str){
     return true;
 }
 
+
+/**
+ * @brief Converts uppercase letters to lowercase letters
+ * 
+ * @param str, the string to be converted
+ */
 void convertStringToLower(std::string &str){
     for(unsigned i = 0; i < str.length(); ++i){
         if(str[i] >= 'A' && str[i] <= 'Z'){
@@ -175,12 +183,19 @@ void convertStringToLower(std::string &str){
     }
 }
 
+
+/**
+ * @brief Reads data from a file, adds it to career structures, then appends these structures to a vector
+ * 
+ * @param vec, the vector being appended to
+ * @param file, the file being read from
+ */
 void readData(std::vector<career> &vec, std::ifstream &file){
-    std::string line;
-    std::string section;
-    int dataPiece;
+    std::string line; // Entire line, read by getline
+    std::string section; // Section of line between commas
+    int dataPiece; // Index of which piece of data is being read
     bool inQuotes = false;
-    // Skips the first non-blank line, as well as all the blank ones that came before it
+    // Skips empty lines as well as the first non-empty line (this is usually the header)
     do {
         getline(file,line);
     } while(stringOnlyWhitespace(line));
@@ -189,15 +204,19 @@ void readData(std::vector<career> &vec, std::ifstream &file){
         inQuotes = false;
         dataPiece = 0;
         std::getline(file,line);
-        if(!stringOnlyWhitespace(line)){
+        if(!stringOnlyWhitespace(line)){ // Checks if the line read is not empty
             career currentCareer;
             section = "";
             for(unsigned i = 0; i < line.length(); ++i){
-                if((line[i] == ',' || i == line.length()-1) && !inQuotes ){
-                    if(i == line.length()-1){
-                        section += line[i];
+                // The following is true when the end of the line is reached, or
+                // when a comma that is not within quotes is reached (commas can be part of the name if they are within quotes)
+                if(i == line.length()-1 || (line[i] == ',' && !inQuotes )){
+                    if(i == line.length()-1){ // Adds the last letter of the line to the section string
+                        section += line[i]; // This is because characters are only being added when the previous if statement is false
                     }
-                    ++dataPiece;
+                    ++dataPiece; // This is so we know which data piece we are working with
+
+                    // Adds data to the structure
                     if(dataPiece == 1){
                         currentCareer.totalPopulation = stringToUnsignedInt(section);
                     } else if(dataPiece == 2){
@@ -224,16 +243,17 @@ void readData(std::vector<career> &vec, std::ifstream &file){
                         currentCareer.numMasters = stringToUnsignedInt(section);
                     } 
                     section = "";
-                } else if(line[i] == '"'){
+                } else if(line[i] == '"'){ // Will reverse the value of inQuotes when a quote is encountered
                     inQuotes = !inQuotes;
-                } else {
+                } else { // Otherwise, add the character to the section string
                     section += line[i];
                 }
             }
-            vec.push_back(currentCareer);
+            vec.push_back(currentCareer); // Adds the filled in structure to the vector
         }
     }
 }
+
 
 /**
  * @brief Will display a career's name and its specified info. Info should be a character
@@ -251,8 +271,8 @@ void readData(std::vector<career> &vec, std::ifstream &file){
  * 'd' = num doctorate
  * 'g' = num masters (graduate school)
  * 
- * @param data 
- * @param info 
+ * @param data, the career object being displayed 
+ * @param info, character corresponding to the data to be displayed. See above for the list
  */
 void displayCareer(career * data, char info){
     std::cout << std::fixed << std::setprecision(2);
@@ -300,6 +320,11 @@ void displayCareer(career * data, char info){
 }
 
 
+/**
+ * @brief Displays all of the data pieces for a career
+ * 
+ * @param data, the career object being displayed
+ */
 void displayCareer(career * data){
     unsigned dataWidth = 23;
     std::cout << std::endl << "\033[4m" << data->name << "\033[0m" << ":" << std::endl;
@@ -340,7 +365,12 @@ void displayCareer(career * data){
 }
 
 
-
+/**
+ * @brief Assigns a pointer to each object of the original vector, and appends them to the pointers vector
+ * 
+ * @param original, the vector of career objects being pointed to
+ * @param pointers, the vector of pointers being filled
+ */
 void pointToVectorElements(std::vector<career> &original, std::vector<career *> &pointers){
     pointers.clear();
     for(unsigned i = 0; i < original.size(); ++i){
@@ -350,7 +380,31 @@ void pointToVectorElements(std::vector<career> &original, std::vector<career *> 
 
 
 void displayMultipleCareers(const std::vector<career *> &pointers, char info, unsigned num){
-    std::cout << std::endl;
+    std::cout << std::endl << std::setw(41) << std::left << " Education major:";
+    if(info == 'p'){
+        std::cout << "Total Population:";
+    } else if(info == 's'){
+        std::cout << "Mean Salary:";
+    } else if(info == 'S'){
+        std::cout << "Median Salary:";
+    } else if(info == 'A'){
+        std::cout << "Number of Asians:";
+    } else if(info == 'M'){
+        std::cout << "Number of Minorities:";
+    } else if(info == 'W'){
+        std::cout << "Number of Whites:" ;
+    } else if(info == 'm'){
+        std::cout << "Number of Males:";
+    } else if(info == 'f'){
+        std::cout << "Number of Females:";
+    } else if(info == 'b'){
+        std::cout << "Number of Bachelor's:";
+    } else if(info == 'd'){
+        std::cout << "Number of Doctorate's:" ;
+    } else if(info == 'g'){
+        std::cout << "Number of Master's:";
+    }
+    std::cout << std::endl << " ----------------------------------------------------" << std::endl;
     for(unsigned i = 0; i < num && i < pointers.size(); ++i){
         std::cout << std::setw(2) << std::right << i+1 << std::setw(2) << ". ";
         displayCareer(pointers[i], info);
@@ -358,6 +412,32 @@ void displayMultipleCareers(const std::vector<career *> &pointers, char info, un
 }
 
 void displayMultipleCareers(const std::vector<career *> &pointers, char info){
+    std::cout << std::endl << std::setw(41) << std::left << " Education major:";
+    if(info == 'p'){
+        std::cout << "Total Population:";
+    } else if(info == 's'){
+        std::cout << "Mean Salary:";
+    } else if(info == 'S'){
+        std::cout << "Median Salary:";
+    } else if(info == 'A'){
+        std::cout << "Number of Asians:";
+    } else if(info == 'M'){
+        std::cout << "Number of Minorities:";
+    } else if(info == 'W'){
+        std::cout << "Number of Whites:" ;
+    } else if(info == 'm'){
+        std::cout << "Number of Males:";
+    } else if(info == 'f'){
+        std::cout << "Number of Females:";
+    } else if(info == 'b'){
+        std::cout << "Number of Bachelor's:";
+    } else if(info == 'd'){
+        std::cout << "Number of Doctorate's:" ;
+    } else if(info == 'g'){
+        std::cout << "Number of Master's:";
+    }
+    std::cout << std::endl << " ----------------------------------------------------" << std::endl;
+
     for(unsigned i = 0; i < pointers.size(); ++i){
         std::cout << std::setw(2) << std::right << i+1 << std::setw(2) << ". ";
         displayCareer(pointers[i], info);
@@ -572,11 +652,71 @@ void sortPointerVector(std::vector<career *> &pointers, const char info, const c
 }
 
 
+
+void displayTotals(std::vector<career *> data){
+    unsigned pop,numA,numMinority,numW,numFe,numMale,numB,numMasters,numD;
+    pop = numA = numMinority = numW = numFe = numMale = numB = numMasters = numD = 0;
+    double meanSalary,medianSalary;
+    meanSalary = medianSalary = 0;
+    double medianArr[data.size()];
+    for(unsigned i = 0; i < data.size(); ++i){
+        pop += data[i]->totalPopulation;
+        numA += data[i]->numAsians;
+        numMinority += data[i]->numMinorities;
+        numW += data[i]->numWhites;
+        numFe += data[i]->numFemales;
+        numMale += data[i]->numMales;
+        numB += data[i]->numBachelors;
+        numMasters += data[i]->numMasters;
+        numD += data[i]->numDoctorate;
+        meanSalary += data[i]->meanSalary;
+        medianArr[i] = data[i]->medianSalary;
+    }
+    meanSalary /= data.size();
+    medianSalary = medianArr[data.size()/2];
+    unsigned dataWidth = 23;
+    std::cout << std::endl << "\033[4m" << "All Majors" << "\033[0m" << ":" << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Population:" 
+        << "#" << std::setw(11) << std::right << pop << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Mean Salary:" 
+        << "\033[38;5;46m" << '$' << "\033[0m" << std::setw(11) << std::right << meanSalary << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Median Salary:" 
+        << "\033[38;5;46m" << '$' << "\033[0m" << std::setw(11) << std::right << medianSalary << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Asians:" 
+        << "#" << std::setw(11) << std::right << numA << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Minorities:" 
+        << "#" << std::setw(11) << std::right << numMinority << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Whites:" 
+        << "#" << std::setw(11) << std::right << numW << std::endl;
+
+    std::cout << std::setw(4) << std::right << std::fixed << std::setprecision(1) 
+        << std::endl << std::setw(7) << "Females" << std::setw(32) 
+        << (static_cast<double>(numFe)/pop)*100
+        << "% Female" << std::right << std::setw(33) << "Males" << std::endl;
+        std::cout << std::setw(8) << std::left << numFe;
+    
+    for(unsigned i = 0; i < 64; ++i){
+        if(i < 64*(static_cast<double>(numFe)/pop)){
+            std::cout << "\033[38;5;200m" << '#' << "\033[0m" << std::flush;
+        } else {
+            std::cout << "\033[38;5;27m" << '@' << "\033[0m" << std::flush;
+        }
+    }
+    std::cout << std::setw(8) << std::right << numMale << std::endl << std::endl;
+
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Bachelor's:" 
+        << "#" << std::setw(11) << std::right << numB << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Masters:" 
+        << "#" << std::setw(11) << std::right << numMasters << std::endl;
+    std::cout << std::setw(dataWidth) << std::left <<  "Number of Doctorate's:" 
+        << "#" << std::setw(11) << std::right << numD << std::endl;
+}
+
 unsigned getMenuOption(unsigned min, unsigned max){
-    std::cout << "Enter a menu option (" << min << "-" << max << "): ";
     std::string input;
     unsigned output;
     do {
+        std::cout << "Enter a menu option (" << min << "-" << max << "): ";
         input = "";
         std::getline(std::cin,input);
         if(!stringOnlyWhitespace(input)){
@@ -589,16 +729,17 @@ unsigned getMenuOption(unsigned min, unsigned max){
 void displayMenu(std::vector<career *> &pointers){
     std::cout << std::endl << std::endl;
     std::cout << "2015 National Survey of Recent College Graduates" << std::endl;
-    std::cout << "1.  Top 10 Majors with the Highest Mean Salary" << std::endl;
-    std::cout << "2.  Top 10 Majors with the Lowest Mean Salary" << std::endl;
-    std::cout << "3.  Top 10 Majors with the Highest Median Salary" << std::endl;
-    std::cout << "4.  Top 10 Majors with the Lowest Median Salary" << std::endl;
-    std::cout << "5.  What are the Top 5 Majors with the Highest Number of Asians" << std::endl;
-    std::cout << "6.  What are the Top 5 Majors with the Lowest Number of Asians" << std::endl;
-    std::cout << "7.  What are the Top 5 Majors with the Highest Number of Minorities" << std::endl;
-    std::cout << "8.  What are the Top 5 Majors with the Lowest Number of Minorities" << std::endl;
-    std::cout << "9.  Top 5 Majors with Highest Percentage of Females" << std::endl;
+    std::cout << " 1. Top 10 Majors with the Highest Mean Salary" << std::endl;
+    std::cout << " 2. Top 10 Majors with the Lowest Mean Salary" << std::endl;
+    std::cout << " 3. Top 10 Majors with the Highest Median Salary" << std::endl;
+    std::cout << " 4. Top 10 Majors with the Lowest Median Salary" << std::endl;
+    std::cout << " 5. What are the Top 5 Majors with the Highest Number of Asians" << std::endl;
+    std::cout << " 6. What are the Top 5 Majors with the Lowest Number of Asians" << std::endl;
+    std::cout << " 7. What are the Top 5 Majors with the Highest Number of Minorities" << std::endl;
+    std::cout << " 8. What are the Top 5 Majors with the Lowest Number of Minorities" << std::endl;
+    std::cout << " 9. Top 5 Majors with Highest Percentage of Females" << std::endl;
     std::cout << "10. Top 5 Majors with Highest Percentage of Males" << std::endl;
     std::cout << "11. Display Information for a Specific Major" << std::endl;
     std::cout << "12. Exit" << std::endl;
+    std::cout << "13. Aggregate Data" << std::endl;
 }
