@@ -30,7 +30,7 @@ int main(){
     // Menu
     unsigned option;
     do {
-        displayMenu(graduatePointers);
+        displayMenu();
         option = getMenuOption(1,13);
         if(option == 1){ // Highest mean salary
             sortPointerVector(graduatePointers,'s','d');

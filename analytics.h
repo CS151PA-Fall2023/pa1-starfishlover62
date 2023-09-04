@@ -78,7 +78,7 @@ void displayTotals(std::vector<career *> data);
 
 void sortPointerVector(std::vector<career *> &pointers, const char info, const char direction);
 
-void displayMenu(std::vector<career *> &pointers);
+void displayMenu();
 unsigned getMenuOption(unsigned min, unsigned max);
 
 

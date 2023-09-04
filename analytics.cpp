@@ -379,6 +379,13 @@ void pointToVectorElements(std::vector<career> &original, std::vector<career *> 
 }
 
 
+/**
+ * @brief Displays the name and specified info for the specified number of careers
+ * 
+ * @param pointers, vector of careers
+ * @param info, character for what info to display
+ * @param num, the number of careers to display. Will display all elements if num > pointers.size()
+ */
 void displayMultipleCareers(const std::vector<career *> &pointers, char info, unsigned num){
     std::cout << std::endl << std::setw(41) << std::left << " Education major:";
     if(info == 'p'){
@@ -411,6 +418,13 @@ void displayMultipleCareers(const std::vector<career *> &pointers, char info, un
     }
 }
 
+
+/**
+ * @brief Displays the name and info for all careers in the vector
+ * 
+ * @param pointers, vector of careers
+ * @param info, character for which information to display
+ */
 void displayMultipleCareers(const std::vector<career *> &pointers, char info){
     std::cout << std::endl << std::setw(41) << std::left << " Education major:";
     if(info == 'p'){
@@ -444,6 +458,11 @@ void displayMultipleCareers(const std::vector<career *> &pointers, char info){
     }
 }
 
+/**
+ * @brief Displays only the names of every career in the vector, as well as an index number next to each one
+ * 
+ * @param pointers, vector with careers
+ */
 void displayMultipleCareers(const std::vector<career *> &pointers){
     unsigned end = pointers.size()/2;
     if(end != static_cast<double>(pointers.size())/2){
@@ -495,6 +514,8 @@ void sortPointerVector(std::vector<career *> &pointers, const char info, const c
         swapIndex = startIndex;
         for(unsigned currentIndex = startIndex + 1; currentIndex < pointers.size(); ++currentIndex){
             if(info == 'n'){
+                // Creates two new string variables to store the current string and the swap string
+                // Then converts the string to lowercase, and removes all non-alphabetical characters
                 std::string swapWorkString = pointers[swapIndex]->name;
                 convertStringToLower(swapWorkString);
                 keepOnlyLetters(swapWorkString);
@@ -502,6 +523,7 @@ void sortPointerVector(std::vector<career *> &pointers, const char info, const c
                 convertStringToLower(currentWorkString);
                 keepOnlyLetters(currentWorkString);
 
+                // Sorts the strings in alphabetical order (A-Z)
                 if(!ascending){
                     for(unsigned i = 0; i < swapWorkString.length() && i < currentWorkString.length(); ++i){
                         if(currentWorkString[i] > swapWorkString[i]){
@@ -511,6 +533,7 @@ void sortPointerVector(std::vector<career *> &pointers, const char info, const c
                             break;
                         }
                     }
+                // Sorts the strings in reverse alphabetical order (Z-A)
                 } else {
                     for(unsigned i = 0; i < swapWorkString.length() && i < currentWorkString.length(); ++i){
                         if(currentWorkString[i] < swapWorkString[i]){
@@ -652,8 +675,13 @@ void sortPointerVector(std::vector<career *> &pointers, const char info, const c
 }
 
 
-
+/**
+ * @brief Adds up the totals for all careers and displays them
+ * 
+ * @param data, vector of career data
+ */
 void displayTotals(std::vector<career *> data){
+    // Finding totals
     unsigned pop,numA,numMinority,numW,numFe,numMale,numB,numMasters,numD;
     pop = numA = numMinority = numW = numFe = numMale = numB = numMasters = numD = 0;
     double meanSalary,medianSalary;
@@ -674,6 +702,7 @@ void displayTotals(std::vector<career *> data){
     }
     meanSalary /= data.size();
     medianSalary = medianArr[data.size()/2];
+    // Displaying totals
     unsigned dataWidth = 23;
     std::cout << std::endl << "\033[4m" << "All Majors" << "\033[0m" << ":" << std::endl;
     std::cout << std::setw(dataWidth) << std::left <<  "Population:" 
@@ -712,6 +741,13 @@ void displayTotals(std::vector<career *> data){
         << "#" << std::setw(11) << std::right << numD << std::endl;
 }
 
+/**
+ * @brief Prompts the user for a menu option. 
+ * 
+ * @param min, the minimum value for the menu option
+ * @param max, the maximum value for the menu option
+ * @return unsigned, value that the user selected
+ */
 unsigned getMenuOption(unsigned min, unsigned max){
     std::string input;
     unsigned output;
@@ -719,14 +755,19 @@ unsigned getMenuOption(unsigned min, unsigned max){
         std::cout << "Enter a menu option (" << min << "-" << max << "): ";
         input = "";
         std::getline(std::cin,input);
-        if(!stringOnlyWhitespace(input)){
+        if(!stringOnlyWhitespace(input)){ // Makes sure that the input was not empty
             output = stringToUnsignedInt(input);
         }
     } while(output < min || output > max);
     return output;
 }
 
-void displayMenu(std::vector<career *> &pointers){
+
+/**
+ * @brief Displays the menu
+ * 
+ */
+void displayMenu(){
     std::cout << std::endl << std::endl;
     std::cout << "2015 National Survey of Recent College Graduates" << std::endl;
     std::cout << " 1. Top 10 Majors with the Highest Mean Salary" << std::endl;
